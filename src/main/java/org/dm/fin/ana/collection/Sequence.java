@@ -19,7 +19,7 @@ public class Sequence<T extends Tick> implements Serializable {
         tree.put(element.date, element);
     }
 
-    public void init() {
+    public void createArray() {
         array = new ArrayList<>();
         for (Map.Entry<Long, T> entry : tree.entrySet()) {
             array.add(entry.getValue());
