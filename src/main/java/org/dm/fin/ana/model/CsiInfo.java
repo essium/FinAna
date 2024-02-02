@@ -1,5 +1,6 @@
 package org.dm.fin.ana.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,6 +13,7 @@ public class CsiInfo extends Tick {
     public Set<String> tier4;
     public Map<String, Data> industries;
     public Map<String, Stock> stocks;
+
     public CsiInfo() {
         this.code = "csi";
         this.tier1 = new HashSet<>();
@@ -22,13 +24,13 @@ public class CsiInfo extends Tick {
         this.stocks = new HashMap<>();
     }
 
-    public static class Data {
+    public static class Data implements Serializable {
         public Double pe;
         public Double pb;
         public Double dr;
     }
 
-    public static class Stock {
+    public static class Stock implements Serializable {
         public String tier1;
         public String tier2;
         public String tier3;
