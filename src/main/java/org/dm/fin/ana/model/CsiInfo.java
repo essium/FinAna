@@ -2,26 +2,22 @@ package org.dm.fin.ana.model;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class CsiInfo extends Tick {
-    public Set<String> tier1;
-    public Set<String> tier2;
-    public Set<String> tier3;
-    public Set<String> tier4;
     public Map<String, Data> industries;
     public Map<String, Stock> stocks;
+    public Map<Integer, Map<String, String>> name2code;
 
     public CsiInfo() {
         this.code = "csi";
-        this.tier1 = new HashSet<>();
-        this.tier2 = new HashSet<>();
-        this.tier3 = new HashSet<>();
-        this.tier4 = new HashSet<>();
         this.industries = new HashMap<>();
         this.stocks = new HashMap<>();
+        this.name2code = new HashMap<>();
+        this.name2code.put(1, new HashMap<>());
+        this.name2code.put(2, new HashMap<>());
+        this.name2code.put(3, new HashMap<>());
+        this.name2code.put(4, new HashMap<>());
     }
 
     public static class Data implements Serializable {
