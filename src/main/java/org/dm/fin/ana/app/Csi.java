@@ -1,5 +1,6 @@
 package org.dm.fin.ana.app;
 
+import org.dm.fin.ana.ana.Analysis;
 import org.dm.fin.ana.data.CsiRepo;
 import org.dm.fin.ana.model.CsiInfo;
 import org.dm.fin.ana.utils.DateUtil;
@@ -56,7 +57,7 @@ public class Csi {
         Long startTime = DateUtil.date2Long(start, FMT_STANDARD);
         CsiRepo repo = CsiRepo.load();
         CsiInfo latest = CsiRepo.readXls(new File(input), input.substring(input.length() - 12, input.length() - 4));
-        int x = 0;
+        Analysis.Tie4Industry(repo, latest, startTime, output);
     }
 
     private void spec() {
