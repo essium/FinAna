@@ -18,4 +18,9 @@ public class DateUtil {
     public static String long2Date (long dateLong, DateTimeFormatter fmt) {
         return date_orig.plusDays(dateLong).format(fmt);
     }
+
+    public static int long2Month(long dateLong) {
+        LocalDate date = date_orig.plusDays(dateLong);
+        return 12 * (date.getYear() - 1990) + date.getMonthValue() - 1;
+    }
 }
