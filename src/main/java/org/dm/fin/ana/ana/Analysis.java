@@ -6,14 +6,16 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dm.fin.ana.data.CsiRepo;
 import org.dm.fin.ana.model.CsiInfo;
+import org.dm.fin.ana.plot.EchartsPlot;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Analysis {
-    public static void Tie4Industry(CsiRepo repo, CsiInfo info, Long start, String output) {
+    public static void Tie4Industry(CsiRepo repo, CsiInfo info, Long start, String outPrefix) {
         Map<String, MonthDataCollection> tie4industry = new HashMap<>();
         String code;
         for (String indName : info.name2code.get(4).keySet()) {
@@ -34,7 +36,7 @@ public class Analysis {
             collection.compute();
             collection.sortPb();
         }
-        try (FileOutputStream fos = new FileOutputStream(output);
+        try (FileOutputStream fos = new FileOutputStream(outPrefix + ".xlsx");
              Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("历史市净率统计");
             Row row = sheet.createRow(0);
@@ -74,5 +76,15 @@ public class Analysis {
             System.err.println(e.getLocalizedMessage());
             System.exit(-1);
         }
+        EchartsPlot.plot(outPrefix + ".html", tie4industry.entrySet().stream()
+                .filter(entry -> {
+                    List<MonthData> list = entry.getValue().listData;
+                    return !Double.isInfinite(list.getLast().pb);
+                })
+                .map(entry -> {
+                    String key = entry.getKey();
+                    MonthDataCollection value = entry.getValue();
+                    return value.echartsPlot(key);
+                }).toList());
     }
 }

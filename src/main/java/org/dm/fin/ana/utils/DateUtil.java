@@ -8,6 +8,8 @@ public class DateUtil {
     public static DateTimeFormatter FMT_HYPHEN = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     public static DateTimeFormatter FMT_STANDARD = DateTimeFormatter.ofPattern("yyyyMMdd");
 
+    private static DateTimeFormatter FMT_SHORT = DateTimeFormatter.ofPattern("uuLL");
+
     private static LocalDate date_orig = LocalDate.of(1990, 1, 1);
 
     public static long date2Long(String dateStr, DateTimeFormatter fmt) {
@@ -22,5 +24,10 @@ public class DateUtil {
     public static int long2Month(long dateLong) {
         LocalDate date = date_orig.plusDays(dateLong);
         return 12 * (date.getYear() - 1990) + date.getMonthValue() - 1;
+    }
+
+    public static String month2Date(int month) {
+        LocalDate date = date_orig.plusMonths(month);
+        return date.format(FMT_SHORT);
     }
 }

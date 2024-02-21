@@ -4,6 +4,10 @@ import org.dm.fin.ana.model.CsiInfo;
 import org.dm.fin.ana.utils.DateUtil;
 
 import java.util.*;
+import java.util.function.Supplier;
+
+import static org.dm.fin.ana.plot.EchartsPlot.OPTION_TEMPLATE;
+import static org.dm.fin.ana.plot.EchartsPlot.createDiv;
 
 public class MonthDataCollection {
     public Map<Integer, MonthData> mapData;
@@ -29,7 +33,7 @@ public class MonthDataCollection {
         listData.sort(new MonthData.ComparePb());
     }
 
-    public void sortMonth() {
+    private void sortMonth() {
         listData.sort(new MonthData.CompareMonth());
     }
 
@@ -68,5 +72,11 @@ public class MonthDataCollection {
             return Double.POSITIVE_INFINITY;
         }
         return (position - left) * listData.get(left + 1).pb + (1d + left - position) * listData.get(left).pb;
+    }
+
+    public Supplier<String> echartsPlot(String title) {
+        sortMonth();
+        String content = String.join(",", listData.stream().map(MonthData::toEcharts).toList());
+        return () -> createDiv(title, 1800, 600, () -> String.format(OPTION_TEMPLATE, title, content));
     }
 }
