@@ -87,4 +87,34 @@ public class Analysis {
                     return value.echartsPlot(key);
                 }).toList());
     }
+
+    public static void stock(CsiRepo repo, List<String> stocks, Long start, String output) {
+        Map<String, MonthDataCollection> stockCollection = new HashMap<>();
+        for (String code: stocks) {
+            stockCollection.putIfAbsent(code, new MonthDataCollection());
+            for (Map.Entry<Long, CsiInfo> entry : repo.data.tree.entrySet()) {
+                if (entry.getKey() < start) {
+                    continue;
+                }
+                CsiInfo info = entry.getValue();
+                if (info.stocks.containsKey(code)) {
+                    stockCollection.get(code).add(entry.getKey(), info.stocks.get(code).data);
+                }
+            }
+        }
+        for (MonthDataCollection collection : stockCollection.values()) {
+            collection.compute();
+            collection.sortPb();
+        }
+        EchartsPlot.plot(output, stockCollection.entrySet().stream()
+                .filter(entry -> {
+                    List<MonthData> list = entry.getValue().listData;
+                    return !Double.isInfinite(list.getLast().pb);
+                })
+                .map(entry -> {
+                    String key = entry.getKey();
+                    MonthDataCollection value = entry.getValue();
+                    return value.echartsPlot(key);
+                }).toList());
+    }
 }

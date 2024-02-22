@@ -10,6 +10,7 @@ import org.kohsuke.args4j.Option;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.dm.fin.ana.utils.DateUtil.FMT_STANDARD;
 
@@ -20,7 +21,7 @@ public class Csi {
     private String input;
     @Option(name = "-o", aliases = "--output", usage = "output prefix")
     private String output;
-    @Option(name = "-l", aliases = "--list", usage = "industry list")
+    @Option(name = "-l", aliases = "--list", usage = "stock list")
     private String list;
     @Option(name = "-d", aliases = "--dir", usage = "input directory")
     private String dir;
@@ -61,7 +62,10 @@ public class Csi {
     }
 
     private void spec() {
-
+        Long startTime = DateUtil.date2Long(start, FMT_STANDARD);
+        CsiRepo repo = CsiRepo.load();
+        List<String> codes = List.of(list.strip().split(","));
+        Analysis.stock(repo, codes, startTime, output + ".html");
     }
 
     private void data() {
