@@ -6,7 +6,7 @@ import org.dm.fin.ana.utils.DateUtil;
 import java.util.*;
 import java.util.function.Supplier;
 
-import static org.dm.fin.ana.plot.EchartsPlot.OPTION_TEMPLATE;
+import static org.dm.fin.ana.plot.EchartsPlot.OPTION_TEMPLATE_1;
 import static org.dm.fin.ana.plot.EchartsPlot.createDiv;
 
 public class MonthDataCollection {
@@ -74,9 +74,9 @@ public class MonthDataCollection {
         return (position - left) * listData.get(left + 1).pb + (1d + left - position) * listData.get(left).pb;
     }
 
-    public Supplier<String> echartsPlot(String title) {
+    public String echartsPlot(String title) {
         sortMonth();
         String content = String.join(",", listData.stream().map(MonthData::toEcharts).toList());
-        return () -> createDiv(title, 1800, 600, () -> String.format(OPTION_TEMPLATE, title, content));
+        return createDiv(title, 1800, 600, () -> String.format(OPTION_TEMPLATE_1, title, content));
     }
 }

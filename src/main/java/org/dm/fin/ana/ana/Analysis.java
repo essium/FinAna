@@ -5,14 +5,20 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dm.fin.ana.data.CsiRepo;
+import org.dm.fin.ana.data.StatRepo;
 import org.dm.fin.ana.model.CsiInfo;
+import org.dm.fin.ana.model.YearStat;
 import org.dm.fin.ana.plot.EchartsPlot;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.dm.fin.ana.plot.EchartsPlot.OPTION_TEMPLATE_2;
+import static org.dm.fin.ana.plot.EchartsPlot.createDiv;
 
 public class Analysis {
     public static void Tie4Industry(CsiRepo repo, CsiInfo info, Long start, String outPrefix) {
@@ -90,7 +96,7 @@ public class Analysis {
 
     public static void stock(CsiRepo repo, List<String> stocks, Long start, String output) {
         Map<String, MonthDataCollection> stockCollection = new HashMap<>();
-        for (String code: stocks) {
+        for (String code : stocks) {
             stockCollection.putIfAbsent(code, new MonthDataCollection());
             for (Map.Entry<Long, CsiInfo> entry : repo.data.tree.entrySet()) {
                 if (entry.getKey() < start) {
@@ -115,6 +121,31 @@ public class Analysis {
                     String key = entry.getKey();
                     MonthDataCollection value = entry.getValue();
                     return value.echartsPlot(key);
+                }).toList());
+    }
+
+    public static void show(StatRepo repo, List<String> stocks, Integer start, String output) {
+        Map<String, List<YearStat>> collection = new HashMap<>();
+        for (String code : stocks) {
+            if (!repo.data.containsKey(code)) {
+                continue;
+            }
+            List<YearStat> array = new ArrayList<>();
+            collection.put(code, array);
+            for (YearStat year : repo.data.get(code).values()) {
+                if (year.year < start) {
+                    continue;
+                }
+                array.add(year);
+            }
+            array.sort(new YearStat.CompareYear());
+        }
+        EchartsPlot.plot(output, collection.entrySet().stream()
+                .map(entry -> {
+                    String code = entry.getKey();
+                    List<YearStat> array = entry.getValue();
+                    String dataStr = String.join(",", array.stream().map(YearStat::echartsData).filter(x -> !x.isBlank()).toList());
+                    return createDiv(code, 1800, 600, () -> String.format(OPTION_TEMPLATE_2, code, dataStr));
                 }).toList());
     }
 }

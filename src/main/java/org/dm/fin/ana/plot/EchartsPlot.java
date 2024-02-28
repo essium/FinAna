@@ -12,11 +12,11 @@ public class EchartsPlot {
             "<script src=\"echarts.js\"></script></head><body>\n";
     private static final String SUFFIX = "</body></html>";
 
-    public static void plot(String file, List<Supplier<String>> divs) {
+    public static void plot(String file, List<String> divs) {
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(PREFIX.getBytes(StandardCharsets.UTF_8));
-            for (Supplier<String> div : divs) {
-                fos.write(div.get().getBytes(StandardCharsets.UTF_8));
+            for (String div : divs) {
+                fos.write(div.getBytes(StandardCharsets.UTF_8));
             }
             fos.write(SUFFIX.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
@@ -31,10 +31,18 @@ public class EchartsPlot {
                 id + "'));var option = {" + option.get() + "};myChart.setOption(option);</script>\n";
     }
 
-    public static final String OPTION_TEMPLATE = "title:{text:'%s'}," +
+    public static final String OPTION_TEMPLATE_1 = "title:{text:'%s'}," +
             "tooltip: {trigger: 'axis',axisPointer: { type: 'cross' }}," +
             "legend: {},dataset:{source:[['time','市净率','净资产收益率'],%s]},xAxis: [{type: 'category',axisTick: {" +
             "alignWithLabel: true}}],yAxis: [{type: 'value',name: '市净率',position: 'left'},{type: 'value'," +
             "name: '净资产收益率',position: 'right'}],series: [{name: '市净率',type: 'line'," +
             "smooth:true,yAxisIndex: 0},{name: '净资产收益率',type: 'bar',yAxisIndex: 1}]";
+
+    public static final String OPTION_TEMPLATE_2 = "title:{text:'%s'}," +
+            "tooltip: {trigger: 'axis',axisPointer: { type: 'cross' }}," +
+            "legend: {},dataset:{source:[['time','净资产','净利润','权益分配'],%s]},xAxis: [{type: 'category',axisTick: {" +
+            "alignWithLabel: true}}],yAxis: [{type: 'value',name: '净资产',position: 'left',axisLabel:{formatter:'{value} 亿元'}}" +
+            ",{type: 'value',name: '净利润',position: 'right',axisLabel:{formatter:'{value} 亿元'}}" +
+            "],series: [{name: '净资产',type: 'line'," +
+            "smooth:true,yAxisIndex: 0},{name: '净利润',type: 'bar',yAxisIndex: 1},{name:'权益分配',type:'bar',yAxisIndex:1}]";
 }
